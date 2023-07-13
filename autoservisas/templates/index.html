@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Auto salonas</h1>
+  <p>Sveiki atvykę į auto servisa!</p>
+  <p>Šiuo metu turime:</p>
+  <ul>
+    <li><strong>Automobiliu:</strong> {{ num_autoservisai }}</li>
+    <li><strong>Užsakymų:</strong> {{ num_uzsakymai }}</li>
+    <!-- Include other information about your models -->
+  </ul>
+  <p>Čia jūs lankotes {{ num_visits }}-ą kartą.</p>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Statistika</h1>
+  <p>Paslaugų kiekis: {{ paslaugu_kiekis }}</p>
+  <p>Atliktų užsakymų kiekis: {{ uzsakymu_kiekis }}</p>
+  <p>Automobilių kiekis: {{ automobiliu_kiekis }}</p>
+
+  <a href="{% url 'index' %}" class="btn btn-primary">Back to Main Page</a>
+{% endblock %}

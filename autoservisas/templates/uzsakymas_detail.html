@@ -1,0 +1,15 @@
+<h1>Užsakymas: {{ uzsakymas.pavadinimas }}</h1>
+
+<p>Data: {{ uzsakymas.data }}</p>
+<p>Suma: {{ uzsakymas.suma }}</p>
+
+<h2>Užsakymo eilutės</h2>
+<ul>
+  {% for eilute in uzsakymas.uzsakymoeilute_set.all %}
+    <li>{{ eilute.paslauga }} - {{ eilute.kiekis }} - {{ eilute.kaina }}</li>
+  {% empty %}
+    <li>No order lines found.</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'uzsakymai' %}" class="btn btn-primary">Back</a>

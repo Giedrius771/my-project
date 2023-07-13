@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+  <h2>Automobiliai</h2>
+
+  <ul class="car-list">
+    {% for automobilis in page_obj %}
+      <li>
+        <div class="car-info">
+          <div class="car-image">
+            <a href="{% url 'automobilis-detail' automobilis.pk %}">
+              {% if automobilis.resized_cover %}
+                <img src="{{ automobilis.resized_cover.url }}" alt="Cover Image" width="360" height="360">
+              {% else %}
+                <img src="{% static 'media/img/noimg.jpg' %}" alt="No Cover Image">
+              {% endif %}
+            </a>
+          </div>
+          <div class="car-details">
+            <h3><a href="{% url 'automobilis-detail' automobilis.pk %}">{{ automobilis.automobilio_modelis }}</a></h3>
+            <ul>
+              <li><strong>Valstybinis numeris:</strong> {{ automobilis.valstybinis_numeris }}</li>
+              <li><strong>VIN kodas:</strong> {{ automobilis.vin_kodas }}</li>
+              <li><strong>Savininkas:</strong> {{ automobilis.klientas }}</li>
+            </ul>
+          </div>
+        </div>
+      </li>
+    {% empty %}
+      <li>No cars found.</li>
+    {% endfor %}
+  </ul>
+
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}" class="page-link">Atgal</a>
+    {% endif %}
+
+    <span class="current-page">{{ page_obj.number }}</span>
+
+    {% if page_obj.has_next %}
+      <a href="?q={{ query }}&page={{ page_obj.next_page_number }}" class="page-link">Pimynt</a>
+    {% endif %}
+  </div>
+{% endblock %}

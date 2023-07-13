@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Mano paimti automobiliai</h1>
+
+    {% if automobilis_list %}
+    <ul>
+
+      {% for automobilis in automobilis_list %} 
+      <li class="{% if automobilis.is_overdue %}text-danger{% endif %}">
+        <a href="{% url 'automobilis-detail' automobilis.pk %}">{{ automobilis.automobilio_modelis }}</a> ({{ automobilis.due_back }})        
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>Šiuo metu iš mūsų nesate paėmę automobilių.</p>
+    {% endif %}       
+{% endblock %}

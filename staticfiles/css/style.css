@@ -1,0 +1,38 @@
+.sidebar-nav {
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+  color: white;
+  display: inline-block;
+}
+
+body {
+  color: black;
+  background-color: white;
+}
+
+h1 {
+  color: MidnightBlue;
+}
+
+a {
+  color: MidnightBlue;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #e69500;
+}
+
+a:active {
+  text-decoration: underline;
+}
