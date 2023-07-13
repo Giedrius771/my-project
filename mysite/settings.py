@@ -144,8 +144,8 @@ LOGIN_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'giedriuspranevicius@inbox.lt'  # Your email address
-EMAIL_HOST_PASSWORD = 'Giedrius1990'  # Your email password
+EMAIL_HOST_USER = 'manoemailas@gmail.com'  # Your email address
+EMAIL_HOST_PASSWORD = 'manopass'  # Your email password
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'giedriuspranevicius@inbox.lt'  # The email address to use as the default sender
 
