@@ -8,7 +8,6 @@ from tinymce.models import HTMLField
 class AutomobilioModelis(models.Model):
     marke = models.CharField(max_length=255)
     modelis = models.CharField(max_length=255)
-    description = HTMLField()
 
     def __str__(self):
         return f"{self.marke} {self.modelis}"
@@ -32,6 +31,8 @@ class Automobilis(models.Model):
     reader = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
     due_back = models.DateField(null=True, blank=True)
+    description = HTMLField()
+
 
     def __str__(self):
         return self.valstybinis_numeris
@@ -129,3 +130,32 @@ class Password(PasswordChangeForm):
         if commit:
             self.user.save()
         return self.user
+
+
+class AutomobilisReview(models.Model):
+    automobilis = models.ForeignKey('Automobilis', on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    content = models.TextField('Atsiliepimas', max_length=2000)
+
+    class Meta:
+        verbose_name = "Atsiliepimas"
+        verbose_name_plural = 'Atsiliepimai'
+        ordering = ['-date_created']
+
+
+class Profilis(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nuotrauka = models.ImageField(default='img/no-img.png', upload_to='profile_pics')
+
+
+    def __str__(self):
+        return f"{self.user.username} profilis"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        img = Image.open(self.nuotrauka.path)
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.nuotrauka.path)

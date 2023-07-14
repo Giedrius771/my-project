@@ -4,7 +4,10 @@
   <h1>Užsakymai</h1>
   <ul>
     {% for uzsakymas in page_obj %}
-      <li><a href="{% url 'uzsakymas-detail' uzsakymas.pk %}">{{ uzsakymas.automobilis.klientas }}, {{ uzsakymas.pavadinimas }}</a></li>
+        <li>
+      <img class="rounded-circle" src="{{ uzsakymas.reviewer.profilis.nuotrauka.url }}" alt="{{ uzsakymas.reviewer.get_full_name }}'s profile picture">
+      <a href="{% url 'uzsakymas-detail' uzsakymas.pk %}">{{ uzsakymas.reviewer.get_full_name }}, {{ uzsakymas.pavadinimas }}</a>
+        </li>
     {% empty %}
       <li>No service orders found.</li>
     {% endfor %}
@@ -13,7 +16,7 @@
   {% if page_obj.has_previous %}
     <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
   {% endif %}
-  
+
   {% if page_obj.has_next %}
     <a href="?page={{ page_obj.next_page_number }}">Next</a>
   {% endif %}

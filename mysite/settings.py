@@ -32,8 +32,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'autoservisas',
     'tinymce',
+    'autoservisas.apps.LibraryConfig',
+    'crispy_forms',
+    'crispy_bootstrap4',
     'bootstrap_datepicker_plus',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -128,13 +130,11 @@ STATICFILES_DIRS = [
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # media folder settings
-MEDIA_ROOT = os.path.join(BASE_DIR, 'library/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 # print(MEDIA_ROOT) - nevenkite padebuginti, bus lengviau nepasiklysti django filesystem džiunglėse
@@ -144,12 +144,11 @@ LOGIN_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'giedriuspranevicius@inbox.lt'  # Your email address
-EMAIL_HOST_PASSWORD = 'Giedrius1990'  # Your email password
+EMAIL_HOST_USER = 'labaigerasemail.com'  # Your email address
+EMAIL_HOST_PASSWORD = 'nerapasswordo'  # Your email password
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'giedriuspranevicius@inbox.lt'  # The email address to use as the default sender
+DEFAULT_FROM_EMAIL = 'giedriuspk@inbox.lt'  # The email address to use as the default sender
 
-# TINYMCE_JS_URL = os.path.join(STATIC_URL, 'tinymce/js/tinymce/tinymce.min.js')
 
 TINYMCE_DEFAULT_CONFIG = {
     'height': 360,
@@ -178,3 +177,5 @@ TINYMCE_DEFAULT_CONFIG = {
     'menubar': True,
     'statusbar': True,
     }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

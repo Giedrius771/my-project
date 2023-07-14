@@ -5,14 +5,23 @@
 
     {% if automobilis_list %}
     <ul>
-
-      {% for automobilis in automobilis_list %} 
+      {% for automobilis in automobilis_list %}
       <li class="{% if automobilis.is_overdue %}text-danger{% endif %}">
-        <a href="{% url 'automobilis-detail' automobilis.pk %}">{{ automobilis.automobilio_modelis }}</a> ({{ automobilis.due_back }})        
+        <img class="rounded-circle" src="{{ automobilis.klientas.profilis.nuotrauka.url }}">
+        <a href="{% url 'automobilis-detail' automobilis.pk %}">
+          {{ automobilis.automobilio_modelis }}
+        </a> ({{ automobilis.due_back }})
+        <br>
+        <strong>Savininkas:</strong> {{ automobilis.klientas }}
+        <br>
+        <strong>Valstybinis numeris:</strong> {{ automobilis.valstybinis_numeris }}
+        <br>
+        <strong>VIN kodas:</strong> {{ automobilis.vin_kodas }}
+        <br>
+        <strong>Aprasymas:</strong> {{ automobilis.description | safe }}
       </li>
       {% endfor %}
     </ul>
-
     {% else %}
       <p>Šiuo metu iš mūsų nesate paėmę automobilių.</p>
     {% endif %}       

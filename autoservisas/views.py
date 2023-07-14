@@ -11,6 +11,15 @@ from .models import Password
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetView
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.contrib.auth.forms import User
+from django.views.decorators.csrf import csrf_protect
+from django.shortcuts import reverse
+from django.views.generic import DetailView
+from django.views.generic.edit import FormMixin
+from .forms import AutomobilisReviewForm, UserUpdateForm, ProfilisUpdateForm
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
@@ -68,10 +77,27 @@ def automobilis_detail(request, pk):
     automobilis = get_object_or_404(Automobilis, pk=pk)
     return render(request, 'automobilis_detail.html', {'automobilis': automobilis})
 
-class AutomobilisDetailView(DetailView):
+class AutomobilisDetailView(FormMixin, DetailView):
     model = Automobilis
     template_name = 'automobilis_detail.html'
-    context_object_name = 'automobilis'
+    form_class = AutomobilisReviewForm
+
+    def get_success_url(self):
+        return reverse('automobilis-detail', kwargs={'pk': self.object.id})
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        form.instance.automobilis = self.object
+        form.instance.reviewer = self.request.user
+        form.save()
+        return super(AutomobilisDetailView, self).form_valid(form)
 
 
 def search(request):
@@ -83,7 +109,7 @@ def search(request):
 class LoanedAutomobiliaiByUserListView(LoginRequiredMixin, generic.ListView):
     model = Automobilis
     template_name = 'user_automobiliai.html'
-    paginate_by = 10
+    paginate_by = 3
 
     def get_queryset(self):
         return Automobilis.objects.filter(reader=self.request.user)
@@ -93,14 +119,62 @@ class CustomPasswordResetView(PasswordResetView):
     success_url = reverse_lazy('password_reset_done')
 
     def form_valid(self, form):
-        # Generate the password reset link
+
         reset_url = self.request.build_absolute_uri(
             reverse_lazy('password_reset_confirm', args=[form.cleaned_data['uid'], form.cleaned_data['token']])
         )
 
-        # Print the password reset link to the terminal
         print(f'Password reset link: {reset_url}')
 
-        # Return a success response
         return super().form_valid(form)
 
+
+@csrf_protect
+def register(request):
+    if request.method == "POST":
+        # pasiimame reikšmes iš registracijos formos
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        password2 = request.POST['password2']
+        # tikriname, ar sutampa slaptažodžiai
+        if password == password2:
+            # tikriname, ar neužimtas username
+            if User.objects.filter(username=username).exists():
+                messages.error(request, f'Vartotojo vardas {username} užimtas!')
+                return redirect('register')
+            else:
+                # tikriname, ar nėra tokio pat email
+                if User.objects.filter(email=email).exists():
+                    messages.error(request, f'Vartotojas su el. paštu {email} jau užregistruotas!')
+                    return redirect('register')
+                else:
+                    # jeigu viskas tvarkoje, sukuriame naują vartotoją
+                    User.objects.create_user(username=username, email=email, password=password)
+                    messages.info(request, f'Vartotojas {username} užregistruotas!')
+                    return redirect('login')
+        else:
+            messages.error(request, 'Slaptažodžiai nesutampa!')
+            return redirect('register')
+    return render(request, 'register.html')
+
+
+@login_required
+def profilis(request):
+    if request.method == "POST":
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfilisUpdateForm(request.POST, request.FILES, instance=request.user.profilis)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, f"Profilis atnaujintas")
+            return redirect('profilis')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfilisUpdateForm(instance=request.user.profilis)
+
+    context = {
+        'u_form': u_form,
+        'p_form': p_form,
+    }
+    return render(request, 'profilis.html', context)

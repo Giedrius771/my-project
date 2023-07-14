@@ -12,4 +12,6 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('password-reset/', views.CustomPasswordResetView.as_view(), name='password-reset'),
     path('myautomobiliai/', views.LoanedAutomobiliaiByUserListView.as_view(), name='my-borrowed'),
+    path('register/', views.register, name='register'),
+    path('profilis/', views.profilis, name='profilis'),
 ]
