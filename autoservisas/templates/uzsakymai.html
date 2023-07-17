@@ -6,7 +6,7 @@
     {% for uzsakymas in page_obj %}
       <li>
         <img class="rounded-circle" src="{{ uzsakymas.automobilis.reader.profilis.nuotrauka.url }}" alt="{{ uzsakymas.automobilis.reader.get_full_name }}'s profile picture" width="100" height="100">
-        <a href="{% url 'uzsakymas-detail' uzsakymas.pk %}">{{ uzsakymas.automobilis.reader.get_full_name }}, {{ uzsakymas.pavadinimas }}</a>
+        <a href="{% url 'uzsakymas-detail' uzsakymas.pk %}">{{ uzsakymas.automobilis.reader.get_full_name }} {{ uzsakymas.pavadinimas }}</a>
       </li>
     {% empty %}
       <li>No service orders found.</li>

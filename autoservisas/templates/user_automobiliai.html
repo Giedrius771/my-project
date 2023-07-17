@@ -4,25 +4,29 @@
     <h1>Mano paimti automobiliai</h1>
 
     {% if automobilis_list %}
-    <ul>
-      {% for automobilis in automobilis_list %}
-      <li class="{% if automobilis.is_overdue %}text-danger{% endif %}">
-        <img class="rounded-circle" src="{{ automobilis.klientas.profilis.nuotrauka.url }}">
-        <a href="{% url 'automobilis-detail' automobilis.pk %}">
-          {{ automobilis.automobilio_modelis }}
-        </a> ({{ automobilis.due_back }})
-        <br>
-        <strong>Savininkas:</strong> {{ automobilis.klientas }}
-        <br>
-        <strong>Valstybinis numeris:</strong> {{ automobilis.valstybinis_numeris }}
-        <br>
-        <strong>VIN kodas:</strong> {{ automobilis.vin_kodas }}
-        <br>
-        <strong>Aprasymas:</strong> {{ automobilis.description | safe }}
-      </li>
-      {% endfor %}
-    </ul>
+        <ul>
+            {% for automobilis in automobilis_list %}
+                <li class="{% if automobilis.is_overdue %}text-danger{% endif %}">
+                    <img class="rounded-circle" src="{{ automobilis.klientas.profilis.url }}">
+                    <a href="{% url 'automobilis-detail' automobilis.pk %}">
+                        {{ automobilis.automobilio_modelis }}
+                    </a> ({{ automobilis.due_back }})
+                    <br>
+                    <br/>
+                    <a class="btn btn-primary" href="{% url 'automobilis-detail' automobilis.pk %}" role="button">Peržiūrėti</a>
+                    <li><strong>Gražinimo terminas:</strong> {{ automobilis.due_back }}</li>
+                    {% if automobilis.reader == user %}
+                        <div>
+                            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'my-automobiliai-update' automobilis.id %}">Redaguoti</a>
+                        </div>
+                        <div>
+                            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'my-automobiliai-delete' automobilis.id %}">Ištrinti</a>
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
     {% else %}
-      <p>Šiuo metu iš mūsų nesate paėmę automobilių.</p>
-    {% endif %}       
+        <p>Šiuo metu iš mūsų nesate paėmę automobilių.</p>
+    {% endif %}
 {% endblock %}

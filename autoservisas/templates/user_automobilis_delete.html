@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Mano paimti automobiliai</h1>
+
+    {% if automobilis %}
+        <ul>
+            <li class="{% if automobilis.is_overdue %}text-danger{% endif %}">
+                <img class="rounded-circle" src="{{ automobilis.klientas.profilis.url }}">
+                <a href="{% url 'automobilis-detail' automobilis.pk %}">
+                    {{ automobilis.automobilio_modelis }}
+                </a> ({{ automobilis.due_back }})
+                <br>
+                <br/>
+                <a class="btn btn-primary" href="{% url 'automobilis-detail' automobilis.pk %}" role="button">Peržiūrėti</a>
+                <li><strong>Gražinimo terminas:</strong> {{ automobilis.due_back }}</li>
+                {% if automobilis.reader == user %}
+                    <div>
+                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'my-automobiliai-update' automobilis.pk %}">Redaguoti</a>
+                    </div>
+                    <div>
+                <form method="post" action="{% url 'my-automobiliai-delete' automobilis.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm mt-1 mb-1">Ištrinti</button>
+                </form>
+                    </div>
+                {% endif %}
+            </li>
+        </ul>
+    {% else %}
+        <p>Šiuo metu iš mūsų nesate paėmę automobilių.</p>
+    {% endif %}
+{% endblock %}

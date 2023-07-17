@@ -1,25 +1,20 @@
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator
-from .models import Automobilis, Uzsakymas, Paslauga
 from django.db.models import Q
-from django.shortcuts import render
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.forms import PasswordChangeForm
-from .models import Password
-from django.views import generic
 from django.urls import reverse_lazy
-from django.contrib.auth.views import PasswordResetView
 from django.contrib import messages
-from django.shortcuts import redirect
-from django.contrib.auth.forms import User
-from django.views.decorators.csrf import csrf_protect
-from django.shortcuts import reverse
-from django.views.generic import DetailView
-from django.views.generic.edit import FormMixin
-from .forms import AutomobilisReviewForm, UserUpdateForm, ProfilisUpdateForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.forms import PasswordChangeForm
+from .models import Automobilis, Uzsakymas, Paslauga
+from .forms import AutomobilisReviewForm, UserUpdateForm, ProfilisUpdateForm, AutomobilisCreateForm
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
+from django.views.generic.edit import FormMixin
+from django.views import generic
+from django.contrib.auth.views import PasswordResetView
+
 
 
 def index(request):
@@ -112,7 +107,7 @@ class LoanedAutomobiliaiByUserListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 3
 
     def get_queryset(self):
-        return Automobilis.objects.filter(reader=self.request.user)
+        return Automobilis.objects.filter(reader=self.request.user).order_by('due_back')
 
 
 class CustomPasswordResetView(PasswordResetView):
@@ -178,3 +173,61 @@ def profilis(request):
         'p_form': p_form,
     }
     return render(request, 'profilis.html', context)
+
+class AutomobiliaiByUserDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Automobilis
+    template_name = 'user_automobiliai.html'
+
+
+
+class AutomobilisByUserCreateView(LoginRequiredMixin, CreateView):
+    model = Automobilis
+    fields = ['automobilio_modelis', 'due_back']
+    success_url = '/autoservisas/myautomobiliai/'
+    template_name = 'user_automobilis_form.html'
+    form_class = AutomobilisCreateForm
+
+    def form_valid(self, form):
+        form.instance.reader = self.request.user
+        return super().form_valid(form)
+
+    # Add this method to check if the user is allowed to create a new automobilis
+    def test_func(self):
+        return self.request.user.is_authenticated
+
+class AutomobilisByUserUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    model = Automobilis
+    fields = ['automobilio_modelis', 'due_back']
+    success_url = "/autoservisas/myautomobiliai/"
+    template_name = 'user_automobilis_form.html'
+
+    def form_valid(self, form):
+        form.instance.reader = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        automobilis = self.get_object()
+        return self.request.user == automobilis.reader
+
+
+class AutomobilisByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    model = Automobilis
+    template_name = 'user_automobilis_delete.html'
+
+    def test_func(self):
+        automobilis = self.get_object()
+        return self.request.user == automobilis.reader
+
+    def get_success_url(self):
+        return reverse('my-borrowed')
+
+
+class AutomobilisByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Automobilis
+    form_class = AutomobilisCreateForm
+    success_url = '/autoservisas/myautomobiliai/'
+    template_name = 'user_automobilis_form.html'
+
+    def form_valid(self, form):
+        form.instance.reader = self.request.user
+        return super().form_valid(form)
